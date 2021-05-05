@@ -80,7 +80,7 @@ class GeneralError implements Exception {
   GeneralError(String? errorMessage) : this.message = errorMessage;
 
   String toString() {
-    return message!;
+    return message ?? 'Exception';
   }
 }
 
@@ -90,7 +90,7 @@ class NotImplementedException extends GeneralError {
   NotImplementedException() : super("Not implemented.");
 
   String toString() {
-    return message!;
+    return message ?? 'Exception';
   }
 }
 
@@ -100,6 +100,6 @@ class InvalidPayloadException extends GeneralError {
   InvalidPayloadException(String errorMessage) : super(errorMessage);
 
   String toString() {
-    return message!;
+    return message ?? 'Exception';
   }
 }
