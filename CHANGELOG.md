@@ -1,3 +1,7 @@
+## [0.1.7+2-nullsafety.1]
+* Import w3c_event_source package with Null Safety
+* Fix null safety migration exceptions
+
 ## [0.1.7+2-nullsafety.0]
 * Null Safety
 
