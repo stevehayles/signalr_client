@@ -1,3 +1,6 @@
+## [1.0.1-nullsafetydev.0]
+* Apply Dart migration to null safety
+
 ## [1.0.1]
 * Upgrade packages
 

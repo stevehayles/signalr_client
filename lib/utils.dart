@@ -5,15 +5,15 @@ import 'package:logging/logging.dart';
 import 'ihub_protocol.dart';
 import 'signalr_client.dart';
 
-bool isIntEmpty(int value) {
+bool isIntEmpty(int? value) {
   return (value == null);
 }
 
-bool isStringEmpty(String value) {
+bool isStringEmpty(String? value) {
   return (value == null) || (value.length == 0);
 }
 
-bool isListEmpty(List value) {
+bool isListEmpty(List? value) {
   return (value == null) || (value.length == 0);
 }
 
@@ -46,11 +46,11 @@ String formatArrayBuffer(Uint8List data) {
 }
 
 Future<void> sendMessage(
-    Logger logger,
+    Logger? logger,
     String transportName,
     SignalRHttpClient httpClient,
-    String url,
-    AccessTokenFactory accessTokenFactory,
+    String? url,
+    AccessTokenFactory? accessTokenFactory,
     Object content,
     bool logMessageContent) async {
   MessageHeaders headers = MessageHeaders();

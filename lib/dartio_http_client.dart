@@ -12,56 +12,56 @@ typedef OnHttpClientCreateCallback = void Function(HttpClient httpClient);
 class DartIOHttpClient extends SignalRHttpClient {
   // Properties
 
-  final Logger _logger;
-  final OnHttpClientCreateCallback _httpClientCreateCallback;
+  final Logger? _logger;
+  final OnHttpClientCreateCallback? _httpClientCreateCallback;
 
   // Methods
 
-  DartIOHttpClient(Logger logger,
-      {OnHttpClientCreateCallback httpClientCreateCallback})
+  DartIOHttpClient(Logger? logger,
+      {OnHttpClientCreateCallback? httpClientCreateCallback})
       : this._logger = logger,
         this._httpClientCreateCallback = httpClientCreateCallback;
 
   Future<SignalRHttpResponse> send(SignalRHttpRequest request) {
     // Check that abort was not signaled before calling send
-    if ((request.abortSignal != null) && request.abortSignal.aborted) {
+    if ((request.abortSignal != null) && request.abortSignal!.aborted!) {
       return Future.error(AbortError());
     }
 
-    if ((request.method == null) || (request.method.length == 0)) {
+    if ((request.method == null) || (request.method!.length == 0)) {
       return Future.error(new ArgumentError("No method defined."));
     }
 
-    if ((request.url == null) || (request.url.length == 0)) {
+    if ((request.url == null) || (request.url!.length == 0)) {
       return Future.error(new ArgumentError("No url defined."));
     }
 
     return Future<SignalRHttpResponse>(() async {
-      final uri = Uri.parse(request.url);
+      final uri = Uri.parse(request.url!);
 
       final httpClient = new HttpClient();
       if (_httpClientCreateCallback != null) {
-        _httpClientCreateCallback(httpClient);
+        _httpClientCreateCallback!(httpClient);
       }
 
       final abortFuture = Future<void>(() {
         final completer = Completer<void>();
         if (request.abortSignal != null) {
-          request.abortSignal.onabort =
+          request.abortSignal!.onabort =
               () => completer.completeError(AbortError());
         }
         return completer.future;
       });
 
-      if ((request.timeout != null) && (0 < request.timeout)) {
-        httpClient.connectionTimeout = Duration(milliseconds: request.timeout);
+      if ((request.timeout != null) && (0 < request.timeout!)) {
+        httpClient.connectionTimeout = Duration(milliseconds: request.timeout!);
       }
 
       _logger?.finest(
           "HTTP send: url '${request.url}', method: '${request.method}' content: '${request.content}'");
 
       final httpReqFuture = await Future.any(
-          [httpClient.openUrl(request.method, uri), abortFuture]);
+          [httpClient.openUrl(request.method!, uri), abortFuture]);
       final httpReq = httpReqFuture as HttpClientRequest;
       if (httpReq == null) {
         return Future.value(null);
@@ -69,9 +69,9 @@ class DartIOHttpClient extends SignalRHttpClient {
 
       httpReq.headers.set("X-Requested-With", "FlutterHttpClient");
       httpReq.headers.set("Content-Type", "text/plain;charset=UTF-8");
-      if ((request.headers != null) && (!request.headers.isEmtpy)) {
-        for (var name in request.headers.names) {
-          httpReq.headers.set(name, request.headers.getHeaderValue(name));
+      if ((request.headers != null) && (!request.headers!.isEmtpy)) {
+        for (var name in request.headers!.names) {
+          httpReq.headers.set(name, request.headers!.getHeaderValue(name)!);
         }
       }
 
@@ -86,12 +86,12 @@ class DartIOHttpClient extends SignalRHttpClient {
       }
 
       if (request.abortSignal != null) {
-        request.abortSignal.onabort = null;
+        request.abortSignal!.onabort = null;
       }
 
       if ((httpResp.statusCode >= 200) && (httpResp.statusCode < 300)) {
         Object content;
-        final contentTypeHeader = httpResp.headers["Content-Type"];
+        final contentTypeHeader = httpResp.headers["Content-Type"]!;
         final isJsonContent = contentTypeHeader.indexWhere(
                 (header) => header.startsWith("application/json")) !=
             -1;

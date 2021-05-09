@@ -11,52 +11,53 @@ import 'utils.dart';
 class WebSocketTransport implements ITransport {
   // Properties
 
-  Logger _logger;
-  AccessTokenFactory _accessTokenFactory;
+  Logger? _logger;
+  AccessTokenFactory? _accessTokenFactory;
   bool _logMessageContent;
-  WebSocket _webSocket;
-  StreamSubscription<Object> _webSocketListenSub;
+  WebSocket? _webSocket;
+  StreamSubscription<Object?>? _webSocketListenSub;
 
   @override
-  OnClose onClose;
+  OnClose? onClose;
 
   @override
-  OnReceive onReceive;
+  OnReceive? onReceive;
 
   // Methods
-  WebSocketTransport(AccessTokenFactory accessTokenFactory, Logger logger,
+  WebSocketTransport(AccessTokenFactory? accessTokenFactory, Logger? logger,
       bool logMessageContent)
       : this._accessTokenFactory = accessTokenFactory,
         this._logger = logger,
         this._logMessageContent = logMessageContent;
 
   @override
-  Future<void> connect(String url, TransferFormat transferFormat) async {
+  Future<void> connect(String? url, TransferFormat transferFormat) async {
     assert(url != null);
     assert(transferFormat != null);
 
     _logger?.finest("(WebSockets transport) Connecting");
 
     if (_accessTokenFactory != null) {
-      final token = await _accessTokenFactory();
+      final token = await _accessTokenFactory!();
       if (!isStringEmpty(token)) {
         final encodedToken = Uri.encodeComponent(token);
-        url +=
-            (url.indexOf("?") < 0 ? "?" : "&") + "access_token=$encodedToken";
+        url = url! +
+            (url.indexOf("?") < 0 ? "?" : "&") +
+            "access_token=$encodedToken";
       }
     }
 
     var websocketCompleter = Completer();
     var opened = false;
-    url = url.replaceFirst('http', 'ws');
+    url = url!.replaceFirst('http', 'ws');
     _logger?.finest("WebSocket try connecting to '$url'.");
     _webSocket = await WebSocket.connect(url);
     opened = true;
     websocketCompleter.complete();
     _logger?.info("WebSocket connected to '$url'.");
-    _webSocketListenSub = _webSocket.listen(
+    _webSocketListenSub = _webSocket!.listen(
       // onData
-      (Object message) {
+      (Object? message) {
         if (_logMessageContent && message is String) {
           _logger?.finest(
               "(WebSockets transport) data received. message ${getDataDetail(message, _logMessageContent)}.");
@@ -65,7 +66,7 @@ class WebSocketTransport implements ITransport {
         }
         if (onReceive != null) {
           try {
-            onReceive(message);
+            onReceive!(message);
           } catch (error) {
             _close();
           }
@@ -84,7 +85,7 @@ class WebSocketTransport implements ITransport {
         // We'll reject the connect call instead
         if (opened) {
           if (onClose != null) {
-            onClose();
+            onClose!();
           }
         } else {
           websocketCompleter
@@ -98,15 +99,15 @@ class WebSocketTransport implements ITransport {
 
   @override
   Future<void> send(Object data) {
-    if ((_webSocket != null) && (_webSocket.readyState == WebSocket.open)) {
+    if ((_webSocket != null) && (_webSocket!.readyState == WebSocket.open)) {
       _logger?.finest(
           "(WebSockets transport) sending data. ${getDataDetail(data, true)}.");
       //_logger?.finest("(WebSockets transport) sending data.");
 
       if (data is String) {
-        _webSocket.add(data);
+        _webSocket!.add(data);
       } else if (data is Uint8List) {
-        _webSocket.add(data);
+        _webSocket!.add(data);
       } else {
         throw GeneralError("Content type is not handled.");
       }
@@ -127,16 +128,16 @@ class WebSocketTransport implements ITransport {
     if (_webSocket != null) {
       // Clear websocket handlers because we are considering the socket closed now
       if (_webSocketListenSub != null) {
-        await _webSocketListenSub.cancel();
+        await _webSocketListenSub!.cancel();
         _webSocketListenSub = null;
       }
-      _webSocket.close();
+      _webSocket!.close();
       _webSocket = null;
     }
 
     _logger?.finest("(WebSockets transport) socket closed.");
     if (onClose != null) {
-      onClose();
+      onClose!();
     }
   }
 }
