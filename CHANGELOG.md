@@ -1,3 +1,6 @@
+## [0.1.7+2-nullsafety.3]
+* Fix warnings
+
 ## [0.1.7+2-nullsafety.2]
 * Fix null exceptions
 
