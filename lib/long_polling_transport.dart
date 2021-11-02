@@ -78,7 +78,7 @@ class LongPollingTransport implements ITransport {
           "(LongPolling transport) Unexpected response code: ${response.statusCode}");
 
       // Mark running as false so that the poll immediately ends and runs the close logic
-      _closeError = HttpError(response.statusText ?? "", response.statusCode);
+      _closeError = HttpError(response.statusText, response.statusCode);
       _running = false;
     } else {
       _running = true;

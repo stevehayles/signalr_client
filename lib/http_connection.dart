@@ -120,7 +120,7 @@ class HttpConnection implements IConnection {
         _logger = options.logger {
     _baseUrl = url;
 
-    _options = options ?? HttpConnectionOptions();
+    _options = options;
     _httpClient = options.httpClient ?? DartIOHttpClient(_logger);
     _connectionState = ConnectionState.Disconnected;
   }
