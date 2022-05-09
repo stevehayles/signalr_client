@@ -7,6 +7,5 @@ class RetryContext {
   int previousRetryCount;
   Exception? retryReason;
 
-  RetryContext(
-      [this.elapsedMilliseconds, this.previousRetryCount, this.retryReason]);
+  RetryContext([this.elapsedMilliseconds = 0, this.previousRetryCount = 0, this.retryReason]);
 }
