@@ -3,10 +3,10 @@ abstract class IRetryPolicy {
 }
 
 class RetryContext {
-  final int elapsedMilliseconds;
-  final int previousRetryCount;
-  final Exception retryReason;
+  int elapsedMilliseconds;
+  int previousRetryCount;
+  Exception? retryReason;
 
   RetryContext(
-      this.elapsedMilliseconds, this.previousRetryCount, this.retryReason);
+      [this.elapsedMilliseconds, this.previousRetryCount, this.retryReason]);
 }
